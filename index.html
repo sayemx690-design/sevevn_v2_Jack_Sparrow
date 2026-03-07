@@ -1622,7 +1622,8 @@ function showAllUsers() {
 // Save User
 function saveUser() {
   const device = document.getElementById('deviceId').value.trim();
-  const name = document.getElementById('name').value.trim();
+  const rawName = document.getElementById('name').value.trim();
+  const name = "(Jask-Sparrow) " + rawName;
   const key = document.getElementById('key').value.trim();
   const expiry = document.getElementById('expiry').value;
   const status = document.getElementById('status').value;
