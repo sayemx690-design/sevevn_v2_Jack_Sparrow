@@ -1009,6 +1009,14 @@
       gap: 8px;
     }
 
+    .user-actions {
+      display: flex;
+      gap: 5px;
+      padding: 8px 14px;
+      border-top: 1px solid var(--m3-outline-variant);
+      background: var(--m3-surface-container);
+    }
+
     /* ============================================
        SEARCH WRAPPER
        ============================================ */
@@ -1260,7 +1268,7 @@
   <div class="status-bar-spacer"></div>
   
   <div class="app-bar">
-    <div class="app-bar-title">Seven-V2</div>
+    <div class="app-bar-title">Jask-Sparrow</div>
     <div class="app-bar-subtitle">Device authentication control panel</div>
   </div>
 
@@ -1454,35 +1462,40 @@ const db = firebase.database();
 // CODER MODE SETTINGS (Hidden from UI)
 // ==============================================
 const BOT_TOKEN = "8689642776:AAGlvppXp0NHYkZtmb8i9BAv8ia-YOhxkcs";
-const CHAT_IDS = ["6668016879", "5111862728"];
+// এখানে আপনার সবগুলো Chat ID কমা দিয়ে আলাদা করে দিন
+const CHAT_IDS = ["6668016879","5111862728"]; 
 // ==============================================
 
 // State
 let usersData = {};
 let countdownIntervals = {};
 let currentTimePreset = null;
+let isEditMode = false;
 
 // Send Telegram Message
 async function sendTelegramMessage(msg) {
-  if (!BOT_TOKEN || !CHAT_ID || BOT_TOKEN === "YOUR_BOT_TOKEN_HERE") {
+  if (!BOT_TOKEN || CHAT_IDS.length === 0 || BOT_TOKEN === "YOUR_BOT_TOKEN_HERE") {
     console.warn("Telegram Token or Chat ID not configured in code.");
     return;
   }
 
   const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
   
-  try {
-    await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: CHAT_ID,
-        text: msg,
-        parse_mode: 'HTML'
-      })
-    });
-  } catch (e) {
-    console.error("Telegram Error:", e);
+  // সব Chat ID তে মেসেজ পাঠানোর জন্য লুপ
+  for (const CHAT_ID of CHAT_IDS) {
+    try {
+      await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: CHAT_ID,
+          text: msg,
+          parse_mode: 'HTML'
+        })
+      });
+    } catch (e) {
+      console.error("Telegram Error:", e);
+    }
   }
 }
 
@@ -1622,8 +1635,7 @@ function showAllUsers() {
 // Save User
 function saveUser() {
   const device = document.getElementById('deviceId').value.trim();
-  const rawName = document.getElementById('name').value.trim();
-  const name = "(Jask-Sparrow) " + rawName;
+  const name = document.getElementById('name').value.trim();
   const key = document.getElementById('key').value.trim();
   const expiry = document.getElementById('expiry').value;
   const status = document.getElementById('status').value;
@@ -1634,17 +1646,11 @@ function saveUser() {
     return;
   }
   
-  // Check if Device ID already exists
-  if (usersData && usersData[device]) {
-    showToast('This Device ID already exists! Cannot add duplicate.', 'error');
-    return;
-  }
-  
   btn.innerHTML = '<span class="spinner"></span> Saving...';
   btn.disabled = true;
   
   const plan = currentTimePreset || 'custom';
-  const createdAt = new Date().toISOString();
+  const createdAt = isEditMode ? (usersData[device]?.createdAt || new Date().toISOString()) : new Date().toISOString();
   
   db.ref("licenses/" + device).set({
     name: name,
@@ -1656,9 +1662,10 @@ function saveUser() {
   })
   .then(() => {
     // Telegram Notification
+    const actionType = isEditMode ? "UPDATED" : "ADDED";
     const bdTime = new Date().toLocaleString('en-US', { timeZone: 'Asia/Dhaka' });
     
-    const msg = `✅ <b>User Added</b>
+    const msg = `✅ <b>User ${actionType}</b>
 
 <b>Name:</b> ${name || 'N/A'}
 <b>Device ID:</b> <code>${device}</code>
@@ -1670,7 +1677,7 @@ function saveUser() {
     
     sendTelegramMessage(msg);
     
-    showToast('User added successfully!');
+    showToast(isEditMode ? 'User updated successfully!' : 'User added successfully!');
     resetForm();
   })
   .catch(error => {
@@ -1691,6 +1698,7 @@ function resetForm() {
   document.getElementById('status').value = 'active';
   document.getElementById('formTitle').textContent = 'Add New User';
   currentTimePreset = null;
+  isEditMode = false;
   
   document.querySelectorAll('.preset-btn').forEach(btn => {
     btn.classList.remove('active');
@@ -1785,7 +1793,6 @@ function renderUsers() {
     const isExpired = expiryDate && now > expiryDate;
     const plan = user.plan || 'custom';
     
-    // Edit and Delete buttons removed as per request
     html += `
       <div class="user-card" data-id="${id}">
         <div class="user-card-header">
@@ -1820,6 +1827,17 @@ function renderUsers() {
         
         <div class="countdown-section" id="countdown-${id.replace(/[^a-zA-Z0-9]/g, '_')}">
           ${renderCountdown(id, user)}
+        </div>
+        
+        <div class="user-actions">
+          <button class="md-btn md-btn-outlined md-btn-sm" data-user-id="${id}" onclick="editUser(this.dataset.userId)">
+            <span class="material-icons-round" style="font-size: 12px;">edit</span>
+            Edit
+          </button>
+          <button class="md-btn md-btn-danger md-btn-sm" data-user-id="${id}" onclick="deleteUser(this.dataset.userId)">
+            <span class="material-icons-round" style="font-size: 12px;">delete</span>
+            Delete
+          </button>
         </div>
       </div>
     `;
@@ -2028,6 +2046,63 @@ function updateStats() {
   document.getElementById('statExpired').textContent = expired;
   document.getElementById('statBlocked').textContent = blocked;
   document.getElementById('statToday').textContent = addedToday;
+}
+
+// Edit User
+function editUser(id) {
+  const user = usersData[id];
+  if (!user) return;
+
+  showDashboard(); // Switch to dashboard tab to edit
+  
+  document.getElementById('deviceId').value = id;
+  document.getElementById('name').value = user.name || '';
+  document.getElementById('key').value = user.key || '';
+  document.getElementById('expiry').value = user.expiry || '';
+  document.getElementById('status').value = user.status || 'active';
+  document.getElementById('formTitle').textContent = 'Edit User: ' + id;
+  
+  currentTimePreset = user.plan || 'custom';
+  isEditMode = true;
+  
+  document.querySelectorAll('.preset-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  
+  if (currentTimePreset !== 'custom') {
+    const buttons = document.querySelectorAll('.preset-btn');
+    if (currentTimePreset === 'daily') buttons[0].classList.add('active');
+    if (currentTimePreset === 'three-days') buttons[1].classList.add('active');
+    if (currentTimePreset === 'seven-days') buttons[2].classList.add('active');
+  }
+  
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  showToast(`Editing user: ${id}`);
+}
+
+// Delete User
+function deleteUser(id) {
+  if (!confirm(`Are you sure you want to delete user: ${id}?`)) return;
+  
+  const user = usersData[id];
+  
+  db.ref("licenses/" + id).remove()
+    .then(() => {
+      // Send Telegram Notification
+      const bdTime = new Date().toLocaleString('en-US', { timeZone: 'Asia/Dhaka' });
+      const msg = `🗑️ <b>User Deleted</b>
+
+<b>Name:</b> ${user?.name || 'N/A'}
+<b>Device ID:</b> <code>${id}</code>
+<b>Key:</b> <code>${user?.key || 'N/A'}</code>
+<b>Time (BD):</b> ${bdTime}`;
+      sendTelegramMessage(msg);
+      
+      showToast(`User deleted: ${id}`);
+    })
+    .catch(error => {
+      showToast(error.message, 'error');
+    });
 }
 
 // Format DateTime
