@@ -1,0 +1,2055 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#006B5A" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#003729" media="(prefers-color-scheme: dark)">
+  <title>Seven-V2 Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <style>
+    /* ============================================
+       MATERIAL 3 DESIGN SYSTEM TOKENS
+       ============================================ */
+    
+    /* Light Theme - M3 Color Tokens */
+    :root {
+      /* Primary Palette */
+      --m3-primary: #006B5A;
+      --m3-on-primary: #FFFFFF;
+      --m3-primary-container: #7FF8DC;
+      --m3-on-primary-container: #002019;
+      
+      /* Secondary Palette */
+      --m3-secondary: #4A635C;
+      --m3-on-secondary: #FFFFFF;
+      --m3-secondary-container: #CCE8DF;
+      --m3-on-secondary-container: #06201A;
+      
+      /* Tertiary Palette */
+      --m3-tertiary: #406277;
+      --m3-on-tertiary: #FFFFFF;
+      --m3-tertiary-container: #C4E7FF;
+      --m3-on-tertiary-container: #001D2E;
+      
+      /* Error Palette */
+      --m3-error: #BA1A1A;
+      --m3-on-error: #FFFFFF;
+      --m3-error-container: #FFDAD6;
+      --m3-on-error-container: #410002;
+      
+      /* Surface System - Light */
+      --m3-surface: #FAFDF8;
+      --m3-surface-dim: #DAD9D7;
+      --m3-surface-bright: #FAFDF8;
+      --m3-surface-container-lowest: #FFFFFF;
+      --m3-surface-container-low: #F4F7F2;
+      --m3-surface-container: #EEF2ED;
+      --m3-surface-container-high: #E8EDE7;
+      --m3-surface-container-highest: #E3E7E1;
+      
+      /* On Surface */
+      --m3-on-surface: #191C1B;
+      --m3-on-surface-variant: #3F4945;
+      --m3-outline: #6F7975;
+      --m3-outline-variant: #BFC9C4;
+      
+      /* Background */
+      --m3-background: #FAFDF8;
+      --m3-on-background: #191C1B;
+      
+      /* Inverse */
+      --m3-inverse-surface: #2D312F;
+      --m3-inverse-on-surface: #EFF1EE;
+      --m3-inverse-primary: #61DBC0;
+      
+      /* Shadows & Elevation */
+      --m3-surface-tint: #006B5A;
+      
+      /* M3 Elevation System - Surface Tint Based */
+      --m3-elevation-1: 0 1px 3px 1px rgba(0,0,0,0.15), 0 1px 2px rgba(0,0,0,0.3);
+      --m3-elevation-2: 0 2px 6px 2px rgba(0,0,0,0.15), 0 1px 2px rgba(0,0,0,0.3);
+      --m3-elevation-3: 0 4px 8px 3px rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.3);
+      --m3-elevation-4: 0 6px 10px 4px rgba(0,0,0,0.15), 0 2px 3px rgba(0,0,0,0.3);
+      --m3-elevation-5: 0 8px 12px 6px rgba(0,0,0,0.15), 0 4px 4px rgba(0,0,0,0.3);
+      
+      /* M3 Motion */
+      --m3-motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+      --m3-motion-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+      --m3-motion-easing-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+      --m3-motion-easing-emphasized-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
+      --m3-motion-duration-short: 150ms;
+      --m3-motion-duration-medium: 300ms;
+      --m3-motion-duration-long: 500ms;
+      
+      /* M3 Shape */
+      --m3-radius-none: 0px;
+      --m3-radius-xs: 4px;
+      --m3-radius-sm: 8px;
+      --m3-radius-md: 12px;
+      --m3-radius-lg: 16px;
+      --m3-radius-xl: 28px;
+      --m3-radius-full: 9999px;
+      
+      /* M3 Typography Scale - Smaller Sizes */
+      --m3-font-family: 'Google Sans', 'Roboto', sans-serif;
+      --m3-font-mono: 'Roboto Mono', monospace;
+      
+      /* Display */
+      --m3-display-large: 36px;
+      --m3-display-medium: 28px;
+      --m3-display-small: 22px;
+      
+      /* Headline */
+      --m3-headline-large: 20px;
+      --m3-headline-medium: 18px;
+      --m3-headline-small: 16px;
+      
+      /* Title */
+      --m3-title-large: 15px;
+      --m3-title-medium: 11px;
+      --m3-title-small: 10px;
+      
+      /* Body */
+      --m3-body-large: 12px;
+      --m3-body-medium: 11px;
+      --m3-body-small: 9px;
+      
+      /* Label */
+      --m3-label-large: 10px;
+      --m3-label-medium: 9px;
+      --m3-label-small: 8px;
+      
+      /* Legacy Variables Mapping */
+      --md-primary: var(--m3-primary);
+      --md-primary-variant: var(--m3-primary-container);
+      --md-secondary: var(--m3-secondary);
+      --md-secondary-variant: var(--m3-tertiary);
+      --md-background: var(--m3-background);
+      --md-surface: var(--m3-surface);
+      --md-error: var(--m3-error);
+      --md-on-primary: var(--m3-on-primary);
+      --md-on-secondary: var(--m3-on-secondary);
+      --md-on-background: var(--m3-on-background);
+      --md-on-surface: var(--m3-on-surface);
+      --md-on-error: var(--m3-on-error);
+      --md-disabled: var(--m3-outline);
+      --md-text-primary: var(--m3-on-surface);
+      --md-text-secondary: var(--m3-on-surface-variant);
+      --md-text-hint: var(--m3-outline);
+      --md-divider: var(--m3-outline-variant);
+      --md-elevation-1: var(--m3-elevation-1);
+      --md-elevation-2: var(--m3-elevation-2);
+      --md-elevation-3: var(--m3-elevation-3);
+      --md-elevation-4: var(--m3-elevation-4);
+      --md-radius: var(--m3-radius-xs);
+      --md-radius-md: var(--m3-radius-md);
+      --md-radius-lg: var(--m3-radius-lg);
+      
+      /* Font Size Variables */
+      --fs-xs: var(--m3-label-small);
+      --fs-sm: var(--m3-body-small);
+      --fs-base: var(--m3-body-medium);
+      --fs-md: var(--m3-body-large);
+      --fs-lg: var(--m3-title-medium);
+      --fs-xl: var(--m3-title-large);
+      --fs-2xl: var(--m3-headline-small);
+      --fs-input: 12px;
+    }
+
+    /* Dark Theme - M3 Color Tokens */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        /* Primary Palette - Dark */
+        --m3-primary: #61DBC0;
+        --m3-on-primary: #003729;
+        --m3-primary-container: #005144;
+        --m3-on-primary-container: #7FF8DC;
+        
+        /* Secondary Palette - Dark */
+        --m3-secondary: #B1CCC3;
+        --m3-on-secondary: #1C352F;
+        --m3-secondary-container: #334B45;
+        --m3-on-secondary-container: #CCE8DF;
+        
+        /* Tertiary Palette - Dark */
+        --m3-tertiary: #A8CBE2;
+        --m3-on-tertiary: #0F3445;
+        --m3-tertiary-container: #274A5E;
+        --m3-on-tertiary-container: #C4E7FF;
+        
+        /* Error Palette - Dark */
+        --m3-error: #FFB4AB;
+        --m3-on-error: #690005;
+        --m3-error-container: #93000A;
+        --m3-on-error-container: #FFDAD6;
+        
+        /* Surface System - Dark */
+        --m3-surface: #191C1B;
+        --m3-surface-dim: #191C1B;
+        --m3-surface-bright: #393D3B;
+        --m3-surface-container-lowest: #0E110F;
+        --m3-surface-container-low: #1F231F;
+        --m3-surface-container: #232723;
+        --m3-surface-container-high: #2D312F;
+        --m3-surface-container-highest: #383C3A;
+        
+        /* On Surface - Dark */
+        --m3-on-surface: #E0E3DF;
+        --m3-on-surface-variant: #BFC9C4;
+        --m3-outline: #89938E;
+        --m3-outline-variant: #3F4945;
+        
+        /* Background - Dark */
+        --m3-background: #191C1B;
+        --m3-on-background: #E0E3DF;
+        
+        /* Inverse - Dark */
+        --m3-inverse-surface: #E3E7E1;
+        --m3-inverse-on-surface: #2D312F;
+        --m3-inverse-primary: #006B5A;
+        
+        /* Surface Tint - Dark */
+        --m3-surface-tint: #61DBC0;
+        
+        /* Elevation with Tint for Dark */
+        --m3-elevation-1: 0 1px 3px 1px rgba(0,0,0,0.5), 0 1px 2px rgba(0,0,0,0.4);
+        --m3-elevation-2: 0 2px 6px 2px rgba(0,0,0,0.5), 0 1px 2px rgba(0,0,0,0.4);
+        --m3-elevation-3: 0 4px 8px 3px rgba(0,0,0,0.5), 0 1px 3px rgba(0,0,0,0.4);
+        --m3-elevation-4: 0 6px 10px 4px rgba(0,0,0,0.5), 0 2px 3px rgba(0,0,0,0.4);
+        --m3-elevation-5: 0 8px 12px 6px rgba(0,0,0,0.5), 0 4px 4px rgba(0,0,0,0.4);
+      }
+    }
+
+    /* ============================================
+       BASE STYLES
+       ============================================ */
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      height: 100%;
+      overscroll-behavior: none;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      font-family: var(--m3-font-family);
+      background: var(--m3-background);
+      color: var(--m3-on-surface);
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      font-size: var(--m3-body-medium);
+      line-height: 1.5;
+      transition: background-color var(--m3-motion-duration-medium) var(--m3-motion-easing-standard),
+                  color var(--m3-motion-duration-medium) var(--m3-motion-easing-standard);
+    }
+
+    /* Status Bar Spacer */
+    .status-bar-spacer {
+      height: env(safe-area-inset-top, 24px);
+      background: linear-gradient(180deg, var(--m3-primary) 0%, color-mix(in srgb, var(--m3-primary) 95%, var(--m3-surface)) 100%);
+      transition: background var(--m3-motion-duration-medium) var(--m3-motion-easing-standard);
+    }
+
+    /* ============================================
+       M3 TOP APP BAR
+       ============================================ */
+    
+    .app-bar {
+      background: linear-gradient(135deg, var(--m3-primary) 0%, color-mix(in srgb, var(--m3-primary) 90%, var(--m3-tertiary)) 100%);
+      color: var(--m3-on-primary);
+      padding: 12px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--m3-elevation-2);
+      border-radius: 0 0 var(--m3-radius-xl) var(--m3-radius-xl);
+      transition: all var(--m3-motion-duration-medium) var(--m3-motion-easing-emphasized);
+    }
+
+    .app-bar::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 50%);
+      border-radius: inherit;
+      pointer-events: none;
+    }
+
+    .app-bar-title {
+      font-size: var(--m3-title-large);
+      font-weight: 500;
+      letter-spacing: 0;
+      line-height: 1.3;
+    }
+
+    .app-bar-subtitle {
+      font-size: var(--m3-body-small);
+      opacity: 0.85;
+      margin-top: 2px;
+      letter-spacing: 0.25px;
+    }
+
+    /* ============================================
+       MAIN CONTAINER
+       ============================================ */
+    
+    .main-container {
+      position: relative;
+      z-index: 10;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 0;
+      padding-bottom: 80px;
+    }
+
+    /* ============================================
+       M3 CARD COMPONENTS
+       ============================================ */
+    
+    .md-card {
+      background: var(--m3-surface-container-low);
+      border-radius: var(--m3-radius-xl);
+      box-shadow: var(--m3-elevation-1);
+      margin: 10px;
+      overflow: hidden;
+      transition: all var(--m3-motion-duration-medium) var(--m3-motion-easing-emphasized);
+      border: 1px solid var(--m3-outline-variant);
+    }
+
+    .md-card:hover {
+      box-shadow: var(--m3-elevation-2);
+      transform: translateY(-2px);
+    }
+
+    .md-card-header {
+      padding: 10px 14px 8px;
+      background: var(--m3-surface-container);
+      border-bottom: 1px solid var(--m3-outline-variant);
+    }
+
+    .md-card-title {
+      font-size: var(--m3-title-medium);
+      font-weight: 500;
+      color: var(--m3-on-surface);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: 0.15px;
+    }
+
+    .md-card-title .material-icons-round {
+      color: var(--m3-primary);
+      font-size: var(--m3-title-medium);
+    }
+
+    .md-card-body {
+      padding: 12px 14px;
+    }
+
+    /* ============================================
+       M3 TEXT FIELD COMPONENTS
+       ============================================ */
+    
+    .md-input-group {
+      position: relative;
+      margin-bottom: 10px;
+    }
+
+    .md-input-group label {
+      display: block;
+      font-size: var(--m3-label-medium);
+      font-weight: 500;
+      color: var(--m3-on-surface-variant);
+      margin-bottom: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .md-input {
+      width: 100%;
+      padding: 10px 12px;
+      background: var(--m3-surface-container-highest);
+      border: 2px solid transparent;
+      border-radius: var(--m3-radius-md);
+      color: var(--m3-on-surface);
+      font-family: var(--m3-font-mono);
+      font-size: var(--fs-input);
+      outline: none;
+      transition: all var(--m3-motion-duration-short) var(--m3-motion-easing-standard);
+    }
+
+    .md-input:hover {
+      background: var(--m3-surface-container-highest);
+      border-color: var(--m3-outline);
+    }
+
+    .md-input:focus {
+      border-color: var(--m3-primary);
+      background: var(--m3-surface-container-lowest);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--m3-primary) 20%, transparent);
+    }
+
+    .md-input::placeholder {
+      color: var(--m3-on-surface-variant);
+      opacity: 0.6;
+    }
+
+    .md-select {
+      width: 100%;
+      padding: 10px 12px;
+      background: var(--m3-surface-container-highest);
+      border: 2px solid transparent;
+      border-radius: var(--m3-radius-md);
+      color: var(--m3-on-surface);
+      font-family: var(--m3-font-family);
+      font-size: var(--fs-input);
+      outline: none;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24'%3E%3Cpath fill='%236F7975' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      transition: all var(--m3-motion-duration-short) var(--m3-motion-easing-standard);
+    }
+
+    .md-select:hover {
+      border-color: var(--m3-outline);
+    }
+
+    .md-select:focus {
+      border-color: var(--m3-primary);
+      background-color: var(--m3-surface-container-lowest);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--m3-primary) 20%, transparent);
+    }
+
+    /* ============================================
+       M3 BUTTON COMPONENTS
+       ============================================ */
+    
+    .md-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 8px 14px;
+      font-family: var(--m3-font-family);
+      font-size: var(--m3-label-medium);
+      font-weight: 500;
+      letter-spacing: 0.1px;
+      text-transform: none;
+      border: none;
+      border-radius: var(--m3-radius-full);
+      cursor: pointer;
+      min-height: 32px;
+      position: relative;
+      overflow: hidden;
+      transition: all var(--m3-motion-duration-short) var(--m3-motion-easing-standard);
+    }
+
+    /* Ripple Effect */
+    .md-btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+      opacity: 0;
+      transform: scale(0);
+      transition: all var(--m3-motion-duration-short) var(--m3-motion-easing-standard);
+    }
+
+    .md-btn:active::after {
+      opacity: 1;
+      transform: scale(2);
+    }
+
+    /* Filled Button */
+    .md-btn-contained {
+      background: var(--m3-primary);
+      color: var(--m3-on-primary);
+      box-shadow: var(--m3-elevation-1);
+    }
+
+    .md-btn-contained:hover {
+      box-shadow: var(--m3-elevation-2);
+      background: color-mix(in srgb, var(--m3-primary) 92%, var(--m3-on-primary));
+    }
+
+    .md-btn-contained:active {
+      box-shadow: var(--m3-elevation-1);
+    }
+
+    /* Outlined Button */
+    .md-btn-outlined {
+      background: transparent;
+      color: var(--m3-primary);
+      border: 1px solid var(--m3-outline);
+    }
+
+    .md-btn-outlined:hover {
+      background: color-mix(in srgb, var(--m3-primary) 8%, transparent);
+      border-color: var(--m3-primary);
+    }
+
+    .md-btn-outlined:active {
+      background: color-mix(in srgb, var(--m3-primary) 12%, transparent);
+    }
+
+    /* Text Button */
+    .md-btn-text {
+      background: transparent;
+      color: var(--m3-primary);
+    }
+
+    .md-btn-text:hover {
+      background: color-mix(in srgb, var(--m3-primary) 8%, transparent);
+    }
+
+    .md-btn-text:active {
+      background: color-mix(in srgb, var(--m3-primary) 12%, transparent);
+    }
+
+    /* Danger Button */
+    .md-btn-danger {
+      background: var(--m3-error);
+      color: var(--m3-on-error);
+    }
+
+    .md-btn-danger:hover {
+      background: color-mix(in srgb, var(--m3-error) 88%, var(--m3-on-error));
+    }
+
+    /* Tonal Button */
+    .md-btn-tonal {
+      background: var(--m3-secondary-container);
+      color: var(--m3-on-secondary-container);
+    }
+
+    .md-btn-tonal:hover {
+      background: color-mix(in srgb, var(--m3-secondary-container) 90%, var(--m3-on-secondary-container));
+    }
+
+    .md-btn-full {
+      width: 100%;
+    }
+
+    .md-btn-sm {
+      padding: 6px 10px;
+      font-size: var(--m3-label-small);
+      min-height: 26px;
+      border-radius: var(--m3-radius-sm);
+    }
+
+    .md-btn:disabled {
+      background: color-mix(in srgb, var(--m3-on-surface) 12%, transparent);
+      color: color-mix(in srgb, var(--m3-on-surface) 38%, transparent);
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* Focus State */
+    .md-btn:focus-visible {
+      outline: 2px solid var(--m3-primary);
+      outline-offset: 2px;
+    }
+
+    /* ============================================
+       M3 BOTTOM NAVIGATION
+       ============================================ */
+    
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--m3-surface-container);
+      box-shadow: var(--m3-elevation-3);
+      display: flex;
+      justify-content: center;
+      z-index: 100;
+      padding-bottom: env(safe-area-inset-bottom, 0);
+      border-radius: var(--m3-radius-xl) var(--m3-radius-xl) 0 0;
+      border-top: 1px solid var(--m3-outline-variant);
+    }
+
+    .bottom-nav-item {
+      flex: 1;
+      max-width: 168px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 12px;
+      color: var(--m3-on-surface-variant);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: var(--m3-font-family);
+      font-size: var(--m3-label-small);
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      border-radius: var(--m3-radius-lg);
+      margin: 4px 3px;
+      transition: all var(--m3-motion-duration-short) var(--m3-motion-easing-standard);
+      position: relative;
+    }
+
+    .bottom-nav-item::before {
+      content: '';
+      position: absolute;
+      top: 4px;
+      width: 48px;
+      height: 24px;
+      border-radius: var(--m3-radius-lg);
+      background: transparent;
+      transition: all var(--m3-motion-duration-short) var(--m3-motion-easing-standard);
+    }
+
+    .bottom-nav-item:hover {
+      background: color-mix(in srgb, var(--m3-on-surface-variant) 8%, transparent);
+    }
+
+    .bottom-nav-item.active {
+      color: var(--m3-on-surface);
+    }
+
+    .bottom-nav-item.active::before {
+      background: var(--m3-secondary-container);
+    }
+
+    .bottom-nav-item .material-icons-round {
+      font-size: 18px;
+      margin-bottom: 2px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ============================================
+       M3 CHIP COMPONENTS
+       ============================================ */
+    
+    .md-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 0 10px;
+      height: 24px;
+      border-radius: var(--m3-radius-sm);
+      font-size: var(--m3-label-medium);
+      font-weight: 500;
+      letter-spacing: 0.1px;
+      transition: all var(--m3-motion-duration-short) var(--m3-motion-easing-standard);
+    }
+
+    .md-chip-primary {
+      background: var(--m3-primary-container);
+      color: var(--m3-on-primary-container);
+    }
+
+    .md-chip-secondary {
+      background: var(--m3-secondary-container);
+      color: var(--m3-on-secondary-container);
+    }
+
+    .md-chip-error {
+      background: var(--m3-error-container);
+      color: var(--m3-on-error-container);
+    }
+
+    /* Time Presets */
+    .time-presets {
+      display: flex;
+      gap: 5px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .preset-btn {
+      flex: 1;
+      min-width: 50px;
+      padding: 8px 10px;
+      font-family: var(--m3-font-family);
+      font-size: var(--m3-label-small);
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-transform: none;
+      border: 1px solid var(--m3-outline);
+      border-radius: var(--m3-radius-md);
+      cursor: pointer;
+      background: var(--m3-surface-container-low);
+      color: var(--m3-on-surface-variant);
+      transition: all var(--m3-motion-duration-short) var(--m3-motion-easing-standard);
+    }
+
+    .preset-btn:hover {
+      background: var(--m3-surface-container);
+      border-color: var(--m3-outline-variant);
+    }
+
+    .preset-btn.active {
+      background: var(--m3-primary-container);
+      color: var(--m3-on-primary-container);
+      border-color: transparent;
+    }
+
+    /* ============================================
+       STATS GRID
+       ============================================ */
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 10px;
+    }
+
+    .stat-card {
+      background: var(--m3-surface-container-low);
+      border-radius: var(--m3-radius-lg);
+      box-shadow: var(--m3-elevation-1);
+      padding: 10px 8px;
+      text-align: center;
+      border: 1px solid var(--m3-outline-variant);
+      transition: all var(--m3-motion-duration-short) var(--m3-motion-easing-standard);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--m3-elevation-2);
+    }
+
+    .stat-card .label {
+      font-size: var(--m3-label-small);
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--m3-on-surface-variant);
+      margin-bottom: 4px;
+    }
+
+    .stat-card .value {
+      font-size: var(--m3-headline-small);
+      font-weight: 500;
+      color: var(--m3-on-surface);
+      font-family: var(--m3-font-mono);
+      line-height: 1.2;
+    }
+
+    .stat-card.primary {
+      background: var(--m3-primary-container);
+      border-color: transparent;
+    }
+
+    .stat-card.primary .value {
+      color: var(--m3-on-primary-container);
+    }
+
+    .stat-card.secondary {
+      background: var(--m3-secondary-container);
+      border-color: transparent;
+    }
+
+    .stat-card.secondary .value {
+      color: var(--m3-on-secondary-container);
+    }
+
+    .stat-card.error {
+      background: var(--m3-error-container);
+      border-color: transparent;
+    }
+
+    .stat-card.error .value {
+      color: var(--m3-on-error-container);
+    }
+
+    /* ============================================
+       FORM ACTIONS
+       ============================================ */
+    
+    .form-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    .form-actions .md-btn {
+      flex: 1;
+      min-width: 80px;
+    }
+
+    /* ============================================
+       USER CARD
+       ============================================ */
+    
+    .user-card {
+      background: var(--m3-surface-container-low);
+      border-radius: var(--m3-radius-lg);
+      box-shadow: var(--m3-elevation-1);
+      margin-bottom: 10px;
+      overflow: hidden;
+      border: 1px solid var(--m3-outline-variant);
+      transition: all var(--m3-motion-duration-medium) var(--m3-motion-easing-emphasized);
+    }
+
+    .user-card:hover {
+      box-shadow: var(--m3-elevation-2);
+    }
+
+    .user-card-header {
+      padding: 10px 14px;
+      background: var(--m3-surface-container);
+      border-bottom: 1px solid var(--m3-outline-variant);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .user-id {
+      font-family: var(--m3-font-mono);
+      font-size: var(--m3-label-small);
+      color: var(--m3-on-primary-container);
+      background: var(--m3-primary-container);
+      padding: 4px 8px;
+      border-radius: var(--m3-radius-xs);
+      cursor: pointer;
+      font-weight: 500;
+      transition: all var(--m3-motion-duration-short) var(--m3-motion-easing-standard);
+    }
+
+    .user-id:hover {
+      background: color-mix(in srgb, var(--m3-primary-container) 80%, var(--m3-primary));
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 3px 10px;
+      border-radius: var(--m3-radius-full);
+      font-size: var(--m3-label-small);
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .status-badge.active {
+      background: #D1FAE5;
+      color: #065F46;
+    }
+
+    .status-badge.blocked {
+      background: #FEE2E2;
+      color: #991B1B;
+    }
+
+    .plan-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      padding: 3px 6px;
+      border-radius: var(--m3-radius-xs);
+      font-size: 8px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .plan-badge.daily {
+      background: #DBEAFE;
+      color: #1E40AF;
+    }
+
+    .plan-badge.three-days {
+      background: #FEF3C7;
+      color: #92400E;
+    }
+
+    .plan-badge.seven-days {
+      background: #E0E7FF;
+      color: #3730A3;
+    }
+
+    .plan-badge.custom {
+      background: var(--m3-surface-container-high);
+      color: var(--m3-on-surface-variant);
+    }
+
+    .user-card-body {
+      padding: 10px 14px;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: var(--m3-body-medium);
+    }
+
+    .info-row .label {
+      color: var(--m3-on-surface-variant);
+      min-width: 40px;
+      font-size: var(--m3-label-small);
+      font-weight: 500;
+    }
+
+    .info-row .value {
+      font-family: var(--m3-font-mono);
+      color: var(--m3-on-surface);
+      font-size: var(--m3-body-small);
+      word-break: break-all;
+    }
+
+    .copy-btn {
+      padding: 4px;
+      background: transparent;
+      border: none;
+      border-radius: var(--m3-radius-xs);
+      color: var(--m3-on-surface-variant);
+      cursor: pointer;
+      transition: all var(--m3-motion-duration-short) var(--m3-motion-easing-standard);
+    }
+
+    .copy-btn:hover {
+      background: var(--m3-surface-container-high);
+      color: var(--m3-primary);
+    }
+
+    /* ============================================
+       COUNTDOWN
+       ============================================ */
+    
+    .countdown-section {
+      padding: 10px 14px;
+      background: var(--m3-surface-container);
+      border-top: 1px solid var(--m3-outline-variant);
+    }
+
+    .countdown-label {
+      font-size: var(--m3-label-small);
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--m3-on-surface-variant);
+      margin-bottom: 8px;
+    }
+
+    .countdown-display {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .countdown-unit {
+      background: var(--m3-surface-container-low);
+      border-radius: var(--m3-radius-sm);
+      padding: 8px 10px;
+      text-align: center;
+      min-width: 40px;
+      border: 1px solid var(--m3-outline-variant);
+      transition: all var(--m3-motion-duration-short) var(--m3-motion-easing-standard);
+    }
+
+    .countdown-unit .number {
+      font-family: var(--m3-font-mono);
+      font-size: var(--m3-title-medium);
+      font-weight: 500;
+      color: var(--m3-on-surface);
+      line-height: 1;
+    }
+
+    .countdown-unit .text {
+      font-size: 8px;
+      color: var(--m3-on-surface-variant);
+      text-transform: uppercase;
+      margin-top: 2px;
+      letter-spacing: 0.5px;
+      font-weight: 500;
+    }
+
+    .countdown-unit.danger {
+      background: var(--m3-error-container);
+      border-color: transparent;
+    }
+
+    .countdown-unit.danger .number {
+      color: var(--m3-on-error-container);
+    }
+
+    .countdown-unit.danger .text {
+      color: var(--m3-on-error-container);
+    }
+
+    .expired-badge {
+      background: var(--m3-error);
+      color: var(--m3-on-error);
+      padding: 8px 12px;
+      border-radius: var(--m3-radius-sm);
+      font-size: var(--m3-label-small);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ============================================
+       SEARCH WRAPPER
+       ============================================ */
+    
+    .search-wrapper {
+      position: relative;
+      flex: 1;
+      min-width: 100px;
+    }
+
+    .search-wrapper .material-icons-round {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--m3-on-surface-variant);
+      font-size: 16px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 12px 10px 36px;
+      background: var(--m3-surface-container-highest);
+      border: 2px solid transparent;
+      border-radius: var(--m3-radius-md);
+      font-size: var(--m3-body-medium);
+      font-family: var(--m3-font-family);
+      outline: none;
+      color: var(--m3-on-surface);
+      transition: all var(--m3-motion-duration-short) var(--m3-motion-easing-standard);
+    }
+
+    .search-input:focus {
+      border-color: var(--m3-primary);
+      background: var(--m3-surface-container-lowest);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--m3-primary) 20%, transparent);
+    }
+
+    .search-input::placeholder {
+      color: var(--m3-on-surface-variant);
+    }
+
+    .filter-select {
+      padding: 10px 32px 10px 12px;
+      background: var(--m3-surface-container-highest);
+      border: 2px solid transparent;
+      border-radius: var(--m3-radius-md);
+      font-size: var(--m3-body-small);
+      font-family: var(--m3-font-family);
+      outline: none;
+      cursor: pointer;
+      appearance: none;
+      color: var(--m3-on-surface);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24'%3E%3Cpath fill='%236F7975' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+      transition: all var(--m3-motion-duration-short) var(--m3-motion-easing-standard);
+    }
+
+    .filter-select:focus {
+      border-color: var(--m3-primary);
+      background-color: var(--m3-surface-container-lowest);
+    }
+
+    /* ============================================
+       TOAST
+       ============================================ */
+    
+    .toast-container {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 300;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      width: calc(100% - 32px);
+      max-width: 400px;
+    }
+
+    .toast {
+      background: var(--m3-inverse-surface);
+      color: var(--m3-inverse-on-surface);
+      border-radius: var(--m3-radius-md);
+      padding: 10px 14px;
+      font-size: var(--m3-body-small);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: var(--m3-elevation-3);
+      animation: toastSlideIn var(--m3-motion-duration-medium) var(--m3-motion-easing-emphasized-decelerate);
+    }
+
+    @keyframes toastSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .toast.success {
+      background: var(--m3-primary-container);
+      color: var(--m3-on-primary-container);
+    }
+
+    .toast.error {
+      background: var(--m3-error-container);
+      color: var(--m3-on-error-container);
+    }
+
+    .toast .material-icons-round {
+      font-size: 16px;
+    }
+
+    /* ============================================
+       EMPTY STATE
+       ============================================ */
+    
+    .empty-state {
+      text-align: center;
+      padding: 30px 16px;
+      color: var(--m3-on-surface-variant);
+    }
+
+    .empty-state .material-icons-round {
+      font-size: 48px;
+      color: var(--m3-outline-variant);
+      margin-bottom: 12px;
+    }
+
+    .empty-state p {
+      font-size: var(--m3-body-medium);
+    }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: var(--m3-outline-variant);
+      margin: 8px 0;
+    }
+
+    /* Panel Visibility */
+    #panel {
+      display: none;
+    }
+
+    .panel-active {
+      display: block !important;
+    }
+
+    /* Loading Spinner */
+    .spinner {
+      width: 14px;
+      height: 14px;
+      border: 2px solid transparent;
+      border-top-color: currentColor;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ============================================
+       ANIMATIONS
+       ============================================ */
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .md-card, .user-card, .stat-card {
+      animation: fadeInUp var(--m3-motion-duration-medium) var(--m3-motion-easing-emphasized-decelerate);
+    }
+
+    /* Staggered Animation */
+    .user-card:nth-child(1) { animation-delay: 0ms; }
+    .user-card:nth-child(2) { animation-delay: 50ms; }
+    .user-card:nth-child(3) { animation-delay: 100ms; }
+    .user-card:nth-child(4) { animation-delay: 150ms; }
+    .user-card:nth-child(5) { animation-delay: 200ms; }
+
+    .stat-card:nth-child(1) { animation-delay: 0ms; }
+    .stat-card:nth-child(2) { animation-delay: 30ms; }
+    .stat-card:nth-child(3) { animation-delay: 60ms; }
+    .stat-card:nth-child(4) { animation-delay: 90ms; }
+    .stat-card:nth-child(5) { animation-delay: 120ms; }
+
+    /* Focus Visible for Accessibility */
+    :focus-visible {
+      outline: 2px solid var(--m3-primary);
+      outline-offset: 2px;
+    }
+
+    /* Reduced Motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    
+    @media (min-width: 600px) {
+      .stats-grid {
+        grid-template-columns: repeat(5, 1fr);
+      }
+
+      .app-bar {
+        padding: 14px 24px;
+      }
+
+      .main-container {
+        padding-bottom: 80px;
+      }
+    }
+
+    /* Large Screens */
+    @media (min-width: 900px) {
+      .main-container {
+        max-width: 800px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Auth Section -->
+<div id="authSection">
+  <div class="status-bar-spacer"></div>
+  
+  <div class="app-bar">
+    <div class="app-bar-title">Seven-V2</div>
+    <div class="app-bar-subtitle">Device authentication control panel</div>
+  </div>
+
+  <div class="main-container">
+    <div class="md-card" style="margin-top: 16px;">
+      <div class="md-card-header">
+        <div class="md-card-title">
+          <span class="material-icons-round">lock</span>
+          Admin Login
+        </div>
+      </div>
+      <div class="md-card-body">
+        <div class="md-input-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" class="md-input" placeholder="admin@example.com">
+        </div>
+        
+        <div class="md-input-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" class="md-input" placeholder="Enter your password">
+        </div>
+        
+        <button class="md-btn md-btn-contained md-btn-full" onclick="login()" id="loginBtn">
+          <span class="material-icons-round">login</span>
+          Sign In
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Admin Panel -->
+<div id="panel">
+  <div class="status-bar-spacer"></div>
+  
+  <div class="app-bar">
+    <div class="app-bar-title">Seven-v2</div>
+    <div class="app-bar-subtitle">Device authentication control panel</div>
+  </div>
+
+  <div class="main-container">
+    
+    <!-- Dashboard Tab Content -->
+    <div id="dashboardTab">
+      <!-- Stats -->
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card primary">
+          <div class="label">Total</div>
+          <div class="value" id="statTotal">0</div>
+        </div>
+        <div class="stat-card secondary">
+          <div class="label">Today</div>
+          <div class="value" id="statToday">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Active</div>
+          <div class="value" id="statActive">0</div>
+        </div>
+        <div class="stat-card error">
+          <div class="label">Expired</div>
+          <div class="value" id="statExpired">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Blocked</div>
+          <div class="value" id="statBlocked">0</div>
+        </div>
+      </div>
+
+      <!-- Add User Form -->
+      <div class="md-card">
+        <div class="md-card-header">
+          <div class="md-card-title">
+            <span class="material-icons-round">person_add</span>
+            <span id="formTitle">Add New User</span>
+          </div>
+        </div>
+        <div class="md-card-body">
+          <div style="display: grid; grid-template-columns: 1fr; gap: 12px;">
+            <div class="md-input-group" style="margin-bottom: 0;">
+              <label for="name">User Name</label>
+              <input type="text" id="name" class="md-input" placeholder="John Doe">
+            </div>
+            
+            <div class="md-input-group" style="margin-bottom: 0;">
+              <label for="deviceId">Device ID</label>
+              <input type="text" id="deviceId" class="md-input" placeholder="DEVICE-XXXX-XXXX">
+            </div>
+            
+            <div class="md-input-group" style="margin-bottom: 0;">
+              <label for="key">License Key</label>
+              <input type="text" id="key" class="md-input" placeholder="KEY-XXXX-XXXX-XXXX">
+            </div>
+            
+            <div class="md-input-group" style="margin-bottom: 0;">
+              <label for="expiry">Expiry Date & Time</label>
+              <input type="datetime-local" id="expiry" class="md-input">
+              <div class="time-presets">
+                <button type="button" class="preset-btn" onclick="setTimePreset('daily')">Daily</button>
+                <button type="button" class="preset-btn" onclick="setTimePreset('three-days')">3 Days</button>
+                <button type="button" class="preset-btn" onclick="setTimePreset('seven-days')">7 Days</button>
+                <button type="button" class="preset-btn" onclick="setTimePreset('custom')">Custom</button>
+              </div>
+            </div>
+            
+            <div class="md-input-group" style="margin-bottom: 0;">
+              <label for="status">Status</label>
+              <select id="status" class="md-select">
+                <option value="active">Active</option>
+                <option value="blocked">Blocked</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-actions">
+            <button class="md-btn md-btn-contained" onclick="saveUser()" id="saveBtn">
+              <span class="material-icons-round">save</span>
+              Save User
+            </button>
+            <button class="md-btn md-btn-outlined" onclick="resetForm()">
+              <span class="material-icons-round">refresh</span>
+              Reset
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Logout -->
+      <div style="padding: 10px; text-align: center;">
+        <button class="md-btn md-btn-text" onclick="logout()">
+          <span class="material-icons-round">logout</span>
+          Sign Out
+        </button>
+      </div>
+    </div>
+
+    <!-- All Users Tab Content -->
+    <div id="allUsersTab" style="display: none;">
+      <div class="md-card" style="margin-top: 8px; margin-bottom: 0;">
+        <div class="md-card-body" style="padding: 10px;">
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <div class="search-wrapper">
+              <span class="material-icons-round">search</span>
+              <input type="text" class="search-input" id="searchInput" placeholder="Search users..." oninput="filterUsers()">
+            </div>
+            <select class="filter-select" id="filterStatus" onchange="filterUsers()">
+              <option value="all">All</option>
+              <option value="active">Active</option>
+              <option value="blocked">Blocked</option>
+              <option value="expired">Expired</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      
+      <!-- User List Container -->
+      <div id="userList" style="padding: 10px;"></div>
+    </div>
+
+  </div>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <button class="bottom-nav-item active" id="dashboardBtn" onclick="showDashboard()">
+      <span class="material-icons-round">dashboard</span>
+      Dashboard
+    </button>
+    <button class="bottom-nav-item" id="allUsersBtn" onclick="showAllUsers()">
+      <span class="material-icons-round">people</span>
+      All Users
+    </button>
+  </nav>
+</div>
+
+<script>
+// Firebase Configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyBUBpTKI9wHNSi9_eCNbMrkGNKxbIIa9og",
+  authDomain: "seven-v2-c13ea.firebaseapp.com",
+  databaseURL: "https://seven-v2-c13ea-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "seven-v2-c13ea",
+  storageBucket: "seven-v2-c13ea.firebasestorage.app",
+  messagingSenderId: "363314674999",
+  appId: "1:363314674999:web:1c5461978655ef481feeb2"
+};
+firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
+const db = firebase.database();
+
+// ==============================================
+// CODER MODE SETTINGS (Hidden from UI)
+// ==============================================
+const BOT_TOKEN = "8128126908:AAFz_FAp5mE2DDIyx5aRFjOh1NoMMf7952w";
+const CHAT_ID = "6668016879";
+// ==============================================
+
+// State
+let usersData = {};
+let countdownIntervals = {};
+let currentTimePreset = null;
+
+// Send Telegram Message
+async function sendTelegramMessage(msg) {
+  if (!BOT_TOKEN || !CHAT_ID || BOT_TOKEN === "YOUR_BOT_TOKEN_HERE") {
+    console.warn("Telegram Token or Chat ID not configured in code.");
+    return;
+  }
+
+  const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+  
+  try {
+    await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: CHAT_ID,
+        text: msg,
+        parse_mode: 'HTML'
+      })
+    });
+  } catch (e) {
+    console.error("Telegram Error:", e);
+  }
+}
+
+// Toast Notification
+function showToast(message, type = 'success') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  
+  const icon = type === 'success' ? 'check_circle' : 'error';
+  toast.innerHTML = `<span class="material-icons-round">${icon}</span><span>${message}</span>`;
+  container.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.style.animation = 'toastSlideIn 0.3s ease reverse forwards';
+    setTimeout(() => toast.remove(), 300);
+  }, 4000);
+}
+
+// Set Time Preset
+function setTimePreset(preset) {
+  const expiryInput = document.getElementById('expiry');
+  const now = new Date();
+  let targetDate;
+  
+  document.querySelectorAll('.preset-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  
+  const buttons = document.querySelectorAll('.preset-btn');
+  if (preset === 'daily') buttons[0].classList.add('active');
+  if (preset === 'three-days') buttons[1].classList.add('active');
+  if (preset === 'seven-days') buttons[2].classList.add('active');
+  if (preset === 'custom') buttons[3].classList.add('active');
+
+  
+  switch(preset) {
+    case 'daily':
+      targetDate = new Date(now.getTime() + 1 * 24 * 60 * 60 * 1000);
+      currentTimePreset = 'daily';
+      showToast('Daily plan: 1 day expiry set', 'success');
+      break;
+    case 'three-days':
+      targetDate = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+      currentTimePreset = 'three-days';
+      showToast('3 Days plan: 3 days expiry set', 'success');
+      break;
+    case 'seven-days':
+      targetDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+      currentTimePreset = 'seven-days';
+      showToast('7 Days plan: 7 days expiry set', 'success');
+      break;
+    case 'custom':
+      currentTimePreset = 'custom';
+      expiryInput.value = '';
+      expiryInput.focus();
+      showToast('Custom: Select your own date', 'success');
+      return;
+  }
+  
+  const year = targetDate.getFullYear();
+  const month = String(targetDate.getMonth() + 1).padStart(2, '0');
+  const day = String(targetDate.getDate()).padStart(2, '0');
+  const hours = String(targetDate.getHours()).padStart(2, '0');
+  const minutes = String(targetDate.getMinutes()).padStart(2, '0');
+  
+  expiryInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
+// Auth State Observer
+auth.onAuthStateChanged(user => {
+  if (user) {
+    document.getElementById('authSection').style.display = 'none';
+    document.getElementById('panel').classList.add('panel-active');
+    loadUsers();
+    startExpiryChecker();
+  } else {
+    document.getElementById('authSection').style.display = 'block';
+    document.getElementById('panel').classList.remove('panel-active');
+    clearAllIntervals();
+  }
+});
+
+// Login
+function login() {
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const btn = document.getElementById('loginBtn');
+  
+  if (!email || !password) {
+    showToast('Please fill all fields', 'error');
+    return;
+  }
+  
+  btn.innerHTML = '<span class="spinner"></span> Signing in...';
+  btn.disabled = true;
+  
+  auth.signInWithEmailAndPassword(email, password)
+    .then(() => {
+      showToast('Login successful!');
+    })
+    .catch(error => {
+      showToast(error.message, 'error');
+    })
+    .finally(() => {
+      btn.innerHTML = '<span class="material-icons-round">login</span> Sign In';
+      btn.disabled = false;
+    });
+}
+
+// Logout
+function logout() {
+  auth.signOut();
+  showToast('Logged out successfully');
+}
+
+// Show Dashboard
+function showDashboard() {
+  document.getElementById('dashboardTab').style.display = 'block';
+  document.getElementById('allUsersTab').style.display = 'none';
+  
+  document.getElementById('dashboardBtn').classList.add('active');
+  document.getElementById('allUsersBtn').classList.remove('active');
+}
+
+// Show All Users
+function showAllUsers() {
+  document.getElementById('dashboardTab').style.display = 'none';
+  document.getElementById('allUsersTab').style.display = 'block';
+  
+  document.getElementById('dashboardBtn').classList.remove('active');
+  document.getElementById('allUsersBtn').classList.add('active');
+  
+  renderUsers();
+}
+
+// Save User
+function saveUser() {
+  const device = document.getElementById('deviceId').value.trim();
+  const name = document.getElementById('name').value.trim();
+  const key = document.getElementById('key').value.trim();
+  const expiry = document.getElementById('expiry').value;
+  const status = document.getElementById('status').value;
+  const btn = document.getElementById('saveBtn');
+  
+  if (!device || !key) {
+    showToast('Device ID and Key are required', 'error');
+    return;
+  }
+  
+  // Check if Device ID already exists
+  if (usersData && usersData[device]) {
+    showToast('This Device ID already exists! Cannot add duplicate.', 'error');
+    return;
+  }
+  
+  btn.innerHTML = '<span class="spinner"></span> Saving...';
+  btn.disabled = true;
+  
+  const plan = currentTimePreset || 'custom';
+  const createdAt = new Date().toISOString();
+  
+  db.ref("licenses/" + device).set({
+    name: name,
+    key: key,
+    expiry: expiry,
+    status: status,
+    plan: plan,
+    createdAt: createdAt
+  })
+  .then(() => {
+    // Telegram Notification
+    const bdTime = new Date().toLocaleString('en-US', { timeZone: 'Asia/Dhaka' });
+    
+    const msg = `✅ <b>User Added</b>
+
+<b>Name:</b> ${name || 'N/A'}
+<b>Device ID:</b> <code>${device}</code>
+<b>License Key:</b> <code>${key}</code>
+<b>Plan:</b> ${getPlanDisplayName(plan)}
+<b>Status:</b> ${status.toUpperCase()}
+<b>Expiry:</b> ${expiry ? formatDateTime(expiry) : 'No limit'}
+<b>Time (BD):</b> ${bdTime}`;
+    
+    sendTelegramMessage(msg);
+    
+    showToast('User added successfully!');
+    resetForm();
+  })
+  .catch(error => {
+    showToast(error.message, 'error');
+  })
+  .finally(() => {
+    btn.innerHTML = '<span class="material-icons-round">save</span> Save User';
+    btn.disabled = false;
+  });
+}
+
+// Reset Form
+function resetForm() {
+  document.getElementById('deviceId').value = '';
+  document.getElementById('name').value = '';
+  document.getElementById('key').value = '';
+  document.getElementById('expiry').value = '';
+  document.getElementById('status').value = 'active';
+  document.getElementById('formTitle').textContent = 'Add New User';
+  currentTimePreset = null;
+  
+  document.querySelectorAll('.preset-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+}
+
+// Load Users
+function loadUsers() {
+  db.ref("licenses").on("value", snapshot => {
+    usersData = snapshot.val() || {};
+    updateStats();
+    // If user is on the all users tab, re-render
+    if (document.getElementById('allUsersTab').style.display !== 'none') {
+        renderUsers();
+    }
+  });
+}
+
+// Filter Users
+function filterUsers() {
+  renderUsers();
+}
+
+// Copy to Clipboard
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('Copied to clipboard!');
+  }).catch(() => {
+    showToast('Failed to copy', 'error');
+  });
+}
+
+// Get Plan Display Name
+function getPlanDisplayName(plan) {
+  switch(plan) {
+    case 'daily': return 'Daily';
+    case 'three-days': return '3 Days';
+    case 'seven-days': return '7 Days';
+    default: return 'Custom';
+  }
+}
+
+// Render Users
+function renderUsers() {
+  const list = document.getElementById('userList');
+  clearAllIntervals();
+  
+  const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+  const filterStatus = document.getElementById('filterStatus').value;
+  
+  let filteredUsers = {};
+  const now = new Date();
+  
+  for (let id in usersData) {
+    const user = usersData[id];
+    const isExpired = user.expiry && now > new Date(user.expiry);
+    
+    const matchesSearch = 
+      id.toLowerCase().includes(searchQuery) ||
+      (user.name && user.name.toLowerCase().includes(searchQuery)) ||
+      (user.key && user.key.toLowerCase().includes(searchQuery));
+    
+    let matchesStatus = true;
+    if (filterStatus === 'active') {
+      matchesStatus = user.status === 'active' && !isExpired;
+    } else if (filterStatus === 'blocked') {
+      matchesStatus = user.status === 'blocked';
+    } else if (filterStatus === 'expired') {
+      matchesStatus = isExpired;
+    }
+    
+    if (matchesSearch && matchesStatus) {
+      filteredUsers[id] = user;
+    }
+  }
+  
+  if (Object.keys(filteredUsers).length === 0) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <span class="material-icons-round">person_off</span>
+        <p>No users found</p>
+      </div>
+    `;
+    return;
+  }
+  
+  let html = '';
+  
+  for (let id in filteredUsers) {
+    const user = filteredUsers[id];
+    const expiryDate = user.expiry ? new Date(user.expiry) : null;
+    const isExpired = expiryDate && now > expiryDate;
+    const plan = user.plan || 'custom';
+    
+    // Edit and Delete buttons removed as per request
+    html += `
+      <div class="user-card" data-id="${id}">
+        <div class="user-card-header">
+          <span class="user-id" onclick="copyToClipboard('${id}')" title="Click to copy">
+            ${id}
+          </span>
+          <div style="display: flex; gap: 5px; align-items: center; flex-wrap: wrap;">
+            <span class="plan-badge ${plan}">${getPlanDisplayName(plan)}</span>
+            <span class="status-badge ${user.status === 'active' ? 'active' : 'blocked'}">
+              ${user.status}
+            </span>
+          </div>
+        </div>
+        
+        <div class="user-card-body">
+          <div class="info-row">
+            <span class="label">Name</span>
+            <span class="value">${user.name || 'N/A'}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Key</span>
+            <span class="value">${user.key}</span>
+            <button class="copy-btn" onclick="copyToClipboard('${user.key}')" title="Copy key">
+              <span class="material-icons-round" style="font-size: 12px;">content_copy</span>
+            </button>
+          </div>
+          <div class="info-row" style="margin-bottom: 0;">
+            <span class="label">Expiry</span>
+            <span class="value">${user.expiry ? formatDateTime(user.expiry) : 'No limit'}</span>
+          </div>
+        </div>
+        
+        <div class="countdown-section" id="countdown-${id.replace(/[^a-zA-Z0-9]/g, '_')}">
+          ${renderCountdown(id, user)}
+        </div>
+      </div>
+    `;
+  }
+  
+  list.innerHTML = html;
+  
+  for (let id in filteredUsers) {
+    const user = filteredUsers[id];
+    if (user.expiry) {
+      startCountdown(id, user);
+    }
+  }
+}
+
+// Render Countdown
+function renderCountdown(id, user) {
+  if (!user.expiry) {
+    return `<div class="countdown-label">No expiry set</div>`;
+  }
+  
+  const expiryDate = new Date(user.expiry);
+  const now = new Date();
+  const diff = expiryDate - now;
+  
+  if (diff <= 0) {
+    return `
+      <div class="expired-badge">
+        <span class="material-icons-round">warning</span>
+        License Expired - Auto deleting...
+      </div>
+    `;
+  }
+  
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+  
+  const isUrgent = days === 0 && hours < 24;
+  
+  return `
+    <div class="countdown-label">Time Remaining</div>
+    <div class="countdown-display">
+      <div class="countdown-unit ${isUrgent ? 'danger' : ''}">
+        <div class="number">${String(days).padStart(2, '0')}</div>
+        <div class="text">Days</div>
+      </div>
+      <div class="countdown-unit ${isUrgent ? 'danger' : ''}">
+        <div class="number">${String(hours).padStart(2, '0')}</div>
+        <div class="text">Hrs</div>
+      </div>
+      <div class="countdown-unit ${isUrgent ? 'danger' : ''}">
+        <div class="number">${String(minutes).padStart(2, '0')}</div>
+        <div class="text">Min</div>
+      </div>
+      <div class="countdown-unit ${isUrgent ? 'danger' : ''}">
+        <div class="number">${String(seconds).padStart(2, '0')}</div>
+        <div class="text">Sec</div>
+      </div>
+    </div>
+  `;
+}
+
+// Start Countdown Timer
+function startCountdown(id, user) {
+  if (!user.expiry) return;
+  
+  const safeId = id.replace(/[^a-zA-Z0-9]/g, '_');
+  
+  const interval = setInterval(() => {
+    const expiryDate = new Date(user.expiry);
+    const now = new Date();
+    const diff = expiryDate - now;
+    
+    const container = document.getElementById(`countdown-${safeId}`);
+    if (!container) {
+      clearInterval(interval);
+      return;
+    }
+    
+    if (diff <= 0) {
+      container.innerHTML = `
+        <div class="expired-badge">
+          <span class="material-icons-round">warning</span>
+          License Expired - Auto deleting...
+        </div>
+      `;
+      clearInterval(interval);
+      return;
+    }
+    
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+    
+    const isUrgent = days === 0 && hours < 24;
+    
+    container.innerHTML = `
+      <div class="countdown-label">Time Remaining</div>
+      <div class="countdown-display">
+        <div class="countdown-unit ${isUrgent ? 'danger' : ''}">
+          <div class="number">${String(days).padStart(2, '0')}</div>
+          <div class="text">Days</div>
+        </div>
+        <div class="countdown-unit ${isUrgent ? 'danger' : ''}">
+          <div class="number">${String(hours).padStart(2, '0')}</div>
+          <div class="text">Hrs</div>
+        </div>
+        <div class="countdown-unit ${isUrgent ? 'danger' : ''}">
+          <div class="number">${String(minutes).padStart(2, '0')}</div>
+          <div class="text">Min</div>
+        </div>
+        <div class="countdown-unit ${isUrgent ? 'danger' : ''}">
+          <div class="number">${String(seconds).padStart(2, '0')}</div>
+          <div class="text">Sec</div>
+        </div>
+      </div>
+    `;
+  }, 1000);
+  
+  countdownIntervals[safeId] = interval;
+}
+
+// Clear All Intervals
+function clearAllIntervals() {
+  for (let key in countdownIntervals) {
+    clearInterval(countdownIntervals[key]);
+  }
+  countdownIntervals = {};
+}
+
+// Start Expiry Checker
+function startExpiryChecker() {
+  setInterval(() => {
+    checkExpiryAndDelete();
+  }, 5000);
+}
+
+// Check Expiry and Delete
+function checkExpiryAndDelete() {
+  const now = new Date();
+  
+  for (let id in usersData) {
+    const user = usersData[id];
+    if (user.expiry) {
+      const expiryDate = new Date(user.expiry);
+      if (now > expiryDate) {
+        
+        // Send Telegram Notification
+        const bdTime = new Date().toLocaleString('en-US', { timeZone: 'Asia/Dhaka' });
+        const msg = `⚠️ <b>License Expired & Deleted</b>
+
+<b>Name:</b> ${user.name || 'N/A'}
+<b>Device ID:</b> <code>${id}</code>
+<b>Key:</b> <code>${user.key}</code>
+<b>Plan:</b> ${user.plan || 'custom'}
+<b>Expiry:</b> ${user.expiry}
+<b>Time (BD):</b> ${bdTime}`;
+        sendTelegramMessage(msg);
+
+        db.ref("licenses/" + id).remove()
+          .then(() => {
+            showToast(`Auto-deleted expired user: ${id}`);
+          });
+      }
+    }
+  }
+}
+
+// Update Stats
+function updateStats() {
+  const total = Object.keys(usersData).length;
+  let active = 0;
+  let expired = 0;
+  let blocked = 0;
+  let addedToday = 0;
+  
+  const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  
+  for (let id in usersData) {
+    const user = usersData[id];
+    
+    if (user.status === 'blocked') {
+      blocked++;
+    } else {
+      if (user.expiry && now > new Date(user.expiry)) {
+        expired++;
+      } else {
+        active++;
+      }
+    }
+    
+    if (user.createdAt) {
+      const createdDate = new Date(user.createdAt);
+      if (createdDate >= startOfToday) {
+        addedToday++;
+      }
+    }
+  }
+  
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statActive').textContent = active;
+  document.getElementById('statExpired').textContent = expired;
+  document.getElementById('statBlocked').textContent = blocked;
+  document.getElementById('statToday').textContent = addedToday;
+}
+
+// Format DateTime
+function formatDateTime(dateStr) {
+  const date = new Date(dateStr);
+  return date.toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+}
+
+// Enter key support
+document.getElementById('password').addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') login();
+});
+
+document.getElementById('email').addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') document.getElementById('password').focus();
+});
+</script>
+
+</body>
+</html>
